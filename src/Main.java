@@ -20,10 +20,14 @@ public class Main {
 			visited.add(false);
 			prev.add(numOfCity);
 		}
+		
 		visited.set(source,true);
+		
 		LinkedList<Integer> queue=new LinkedList<>();
 		queue.add(source);
+		
 		int curr=source;
+		
 		while (!queue.isEmpty() && curr!=destination)
 		{
 			curr=queue.poll();
@@ -50,54 +54,67 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner sc=new Scanner(System.in);
-		System.out.println("Enter the number of city:");
-		int numOfCity = sc.nextInt();
-		List<LinkedList<Integer>> adjacentCity= new ArrayList<LinkedList<Integer>>();
-		for (int i=0;i<numOfCity;i++)
+		while (true)
 		{
-			LinkedList<Integer> adjacent= new LinkedList<Integer>();
-			adjacentCity.add(adjacent);
-		}
-		System.out.println("Enter the probability of having neighbors:");
-		double probability=sc.nextDouble();
-		boolean haveNeighborsBool;
-		Random random = new Random();
-		for (int i=0;i<numOfCity;i++)
-		{
-			if (i>0)
+			System.out.println("Enter the number of city:");
+			int numOfCity = sc.nextInt();
+			List<LinkedList<Integer>> adjacentCity= new ArrayList<LinkedList<Integer>>();
+			for (int i=0;i<numOfCity;i++)
 			{
-				adjacentCity.get(i).add(i-1);
-				adjacentCity.get(i-1).add(i);
+				LinkedList<Integer> adjacent= new LinkedList<Integer>();
+				adjacentCity.add(adjacent);
 			}
-			for (int j=i+2;j<numOfCity;j++)
+			String[]cityName=CityNameGenerator.generateCityNames("city_name.txt",numOfCity);
+			System.out.println("Enter the probability of having neighbors:");
+			double probability=sc.nextDouble();
+			boolean haveNeighborsBool;
+			Random random = new Random();
+			for (int i=0;i<numOfCity;i++)
 			{
-				haveNeighborsBool = haveNeighbors(probability);
-				if (haveNeighborsBool)
-				{	
-					adjacentCity.get(i).add(j);
-					adjacentCity.get(j).add(i);
+				if (i>0)
+				{
+					adjacentCity.get(i).add(i-1);
+					adjacentCity.get(i-1).add(i);
+				}
+				for (int j=i+2;j<numOfCity;j++)
+				{
+					haveNeighborsBool = haveNeighbors(probability);
+					if (haveNeighborsBool)
+					{	
+						adjacentCity.get(i).add(j);
+						adjacentCity.get(j).add(i);
+					}
 				}
 			}
+			for (int i=0;i<numOfCity;i++)
+			{
+				System.out.println("["+i+"]\t"+cityName[i]);
+			//	System.out.println(i+"\t"+adjacentCity.get(i));
+			}
+			System.out.println("Enter source and destination ID separated by space:");
+			
+			int source=sc.nextInt();
+			int destination=sc.nextInt();
+			
+			List<Integer> wayToGo = new ArrayList<>();
+			Stack<Integer> way = new Stack<Integer>();
+			
+			long start=System.nanoTime();
+			BFS(source,destination,adjacentCity,way,numOfCity);
+			long end=System.nanoTime();
+			
+			while (!way.isEmpty())
+			{
+				int curr=way.pop();
+				System.out.println(curr+" "+cityName[curr]);
+			}
+			System.out.println("Time taken\t:"+ (end-start));
+		
+			System.out.println("Do you want to continue?Y/N");
+			String input=sc.next();
+			if (input.equals("N"))
+				break;
 		}
-		for (int i=0;i<numOfCity;i++)
-		{
-			System.out.println(i+"\t"+adjacentCity.get(i));
-		}
-		System.out.println("Enter source and destination:");
-		int source=sc.nextInt();
-		int destination=sc.nextInt();
-		List<Integer> wayToGo = new ArrayList<>();
-		Stack<Integer> way = new Stack<Integer>();
-		long start=System.nanoTime();
-		BFS(source,destination,adjacentCity,way,numOfCity);
-		long end=System.nanoTime();
-		while (!way.isEmpty())
-		{
-			int curr=way.pop();
-			System.out.println(curr+" ");
-		}
-		System.out.println("Time taken\t:"+ (end-start));
-
 	}
 
 }
