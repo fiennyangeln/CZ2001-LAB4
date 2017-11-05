@@ -64,7 +64,7 @@ public class Main {
 				LinkedList<Integer> adjacent= new LinkedList<Integer>();
 				adjacentCity.add(adjacent);
 			}
-			String[]cityName=CityNameGenerator.generateCityNames("city_name.txt",numOfCity);
+			String[]cityName=CityNameGenerator.generateCityNames("src/city_name.txt",numOfCity);
 			System.out.println("Enter the probability of having neighbors:");
 			double probability=sc.nextDouble();
 			boolean haveNeighborsBool;
