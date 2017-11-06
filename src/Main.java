@@ -1,15 +1,6 @@
 import java.util.*;
 public class Main {
 
-	public static boolean haveNeighbors(double probability)
-	{
-		Random random = new Random();
-		double randD= random.nextDouble();
-		if (randD<probability)
-			return true;
-		else
-			return false;
-	}
 	public static void BFS(int source, int destination, List<LinkedList<Integer>> adjacentCity, Stack<Integer> way,int numOfCity)
 	{
 		List<Boolean> visited = new ArrayList<>();
@@ -65,10 +56,17 @@ public class Main {
 				adjacentCity.add(adjacent);
 			}
 			String[]cityName=CityNameGenerator.generateCityNames("src/city_name.txt",numOfCity);
-			System.out.println("Enter the probability of having neighbors:");
-			double probability=sc.nextDouble();
-			boolean haveNeighborsBool;
+			//System.out.println("Enter the probability of having neighbors:");
+			//double probability=sc.nextDouble();
+			System.out.println("Enter the number of edge("+(numOfCity-1)+"-"+(numOfCity*(numOfCity-1)/2)+")\t:");
+			int numOfEdge;
+			do {
+				numOfEdge=sc.nextInt();
+			}while (numOfEdge<(numOfCity-1) || numOfEdge>(numOfCity)*(numOfCity-1/2));
+
 			Random random = new Random();
+
+			//create minimumEdges for BST
 			for (int i=0;i<numOfCity;i++)
 			{
 				if (i>0)
@@ -76,26 +74,37 @@ public class Main {
 					adjacentCity.get(i).add(i-1);
 					adjacentCity.get(i-1).add(i);
 				}
-				for (int j=i+2;j<numOfCity;j++)
+			}
+
+			for (int i=0;i<numOfEdge-(numOfCity-1);i++)
+			{
+				int v1=random.nextInt(numOfCity);
+				int v2=random.nextInt(numOfCity);
+
+				//if the vertices index are the same, or only differs by 1, or has already had edges between them, continue looping
+				if (Math.abs((v1-v2))<=1|| adjacentCity.get(v1).contains(v2))
+					i--;
+
+				//otherwise, add it into the graph
+				else
 				{
-					haveNeighborsBool = haveNeighbors(probability);
-					if (haveNeighborsBool)
-					{	
-						adjacentCity.get(i).add(j);
-						adjacentCity.get(j).add(i);
-					}
+					adjacentCity.get(v1).add(v2);
+					adjacentCity.get(v2).add(v1);
 				}
 			}
 			for (int i=0;i<numOfCity;i++)
 			{
 				System.out.println("["+i+"]\t"+cityName[i]);
-			//	System.out.println(i+"\t"+adjacentCity.get(i));
+				System.out.println(i+"\t"+adjacentCity.get(i));
 			}
 			System.out.println("Enter source and destination ID separated by space:");
-			
-			int source=sc.nextInt();
-			int destination=sc.nextInt();
-			
+
+			int source=-1,destination=-1;
+			do {
+				source = sc.nextInt();
+				destination = sc.nextInt();
+			}while (source<0 ||source>=numOfCity || destination<0 || destination>=numOfCity );
+
 			List<Integer> wayToGo = new ArrayList<>();
 			Stack<Integer> way = new Stack<Integer>();
 			
